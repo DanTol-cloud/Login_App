@@ -1,38 +1,60 @@
-import styled from 'styled-components';
+import {TouchableOpacity} from 'react-native';
 
-import SvgEmailIcon from '../../icons/Email.tsx';
-import SvgEyeIcon from '../../icons/Eye.tsx';
-import SvgLockIcon from '../../icons/Lock.tsx';
-import {styles} from './styles.ts';
+import styled from 'styled-components/native';
 
-const Input = ({item}) => {
+import SvgEmailIcon from '../../assets/icons/Email.tsx';
+import SvgEyeIcon from '../../assets/icons/Eye.tsx';
+import SvgLockIcon from '../../assets/icons/Lock.tsx';
+import {UseFormContext} from '../../context/FormContext.tsx';
+import {RegisterDataInterface} from '../../Pages/RegisterPage/data.ts';
+
+interface InputInterface {
+  item: RegisterDataInterface;
+  brdColor: string;
+}
+
+const Input = ({item, brdColor}: InputInterface) => {
+  const {form, onChangeText, setForm} = UseFormContext();
+  const {isValidEmail, isPasswordShown} = form;
   return (
-    <InputContainer key={item.id}>
+    <InputContainer brdColor={brdColor}>
       {item.name === 'Email' ? (
-        <SvgEmailIcon style={styles.icons} />
+        <SvgEmailIcon color={isValidEmail ? '#262727' : '#EB0057'} />
       ) : (
-        <SvgLockIcon style={styles.icons} />
+        <SvgLockIcon color={isValidEmail ? '#262727' : '#EB0057'} />
       )}
-      <Input
-        textContentType={item.type}
+      <InputForm
         placeholder={item.name}
+        secureTextEntry={item.name === 'Password' && !isPasswordShown}
         value={form[item.id]}
         onChangeText={(value: string) => onChangeText(value, item.name)}
       />
-      {item.name === 'Password' && <SvgEyeIcon style={styles.icons} />}
+      {item.name === 'Password' && (
+        <TouchableOpacity
+          onPress={() =>
+            setForm(prev => ({...prev, isPasswordShown: !prev.isPasswordShown}))
+          }>
+          <SvgEyeIcon color={isValidEmail ? '#262727' : '#EB0057'} />
+        </TouchableOpacity>
+      )}
     </InputContainer>
   );
 };
 
 const InputContainer = styled.View`
   flex-direction: row;
+  border-width: 1px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border-color: ${(props: {brdColor: string}) => props.brdColor};
+  margin: 12px;
 `;
 
-const Input = styled.TextInput`
+const InputForm = styled.TextInput`
   flex: 1;
-  background-color: #262727;
-  border-width: 1px;
-  border-radius: 8px;
+  text-align: left;
+  margin-top: 10px;
   margin-bottom: 10px;
   color: #818181;
 `;

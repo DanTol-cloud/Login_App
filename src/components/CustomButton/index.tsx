@@ -4,21 +4,19 @@ import DropShadow from 'react-native-drop-shadow';
 
 import styled from 'styled-components/native';
 
-interface InputButton {
+interface CustomButtonProps {
   onPress: () => void;
   text: string;
-  bgColor: string;
   shadowOpacity: number;
   isValid?: boolean;
 }
 
-const InputButton = ({
+const CustomButton = ({
   onPress,
   text,
-  bgColor,
   shadowOpacity,
   isValid = true,
-}: InputButton) => {
+}: CustomButtonProps) => {
   const animation = useRef(new Animated.Value(0)).current;
   const interpolated = animation.interpolate({
     inputRange: [0, 0.5, 1, 1.5, 2, 2.5, 3],
@@ -59,22 +57,23 @@ const InputButton = ({
         shadowRadius: 5,
       }}>
       <ButtonContainer>
-        <CustomButton onPress={handlePress} bgColor={bgColor}>
+        <Button onPress={handlePress}>
           <Animated.View style={style}>
             <ButtonText>{text}</ButtonText>
           </Animated.View>
-        </CustomButton>
+        </Button>
       </ButtonContainer>
     </DropShadow>
   );
 };
 
-const CustomButton = styled.TouchableOpacity`
+const Button = styled.TouchableOpacity`
   flex: 1;
   align-items: center;
   justify-content: center;
   flex-direction: row;
-  background-color: ${(props: {bgColor: string}) => props.bgColor};
+  background-color: ${(props: {theme: {register: string}}) =>
+    props.theme.register};
   border-radius: 8px;
   margin: 0 35px 15px 35px;
 `;
@@ -93,4 +92,10 @@ const ButtonContainer = styled.View`
   flex-direction: row;
 `;
 
-export default InputButton;
+Button.defaultProps = {
+  theme: {
+    register: '#EB0057',
+  },
+};
+
+export default CustomButton;
